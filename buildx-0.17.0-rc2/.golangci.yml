@@ -1,0 +1,80 @@
+run:
+  timeout: 30m
+
+  modules-download-mode: vendor
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - depguard
+    - goimports
+    - ineffassign
+    - misspell
+    - unused
+    - revive
+    - staticcheck
+    - typecheck
+    - nolintlint
+    - gosec
+    - forbidigo
+  disable-all: true
+
+linters-settings:
+  govet:
+    enable:
+      - nilness
+      - unusedwrite
+  # enable-all: true
+  # disable:
+  #   - fieldalignment
+  #   - shadow
+  depguard:
+    rules:
+      main:
+        deny:
+          - pkg: "github.com/containerd/containerd/errdefs"
+            desc: The containerd errdefs package was migrated to a separate module. Use github.com/containerd/errdefs instead.
+          - pkg: "github.com/containerd/containerd/log"
+            desc: The containerd log package was migrated to a separate module. Use github.com/containerd/log instead.
+          - pkg: "github.com/containerd/containerd/platforms"
+            desc: The containerd platforms package was migrated to a separate module. Use github.com/containerd/platforms instead.
+          - pkg: "io/ioutil"
+            desc: The io/ioutil package has been deprecated.
+  forbidigo:
+    forbid:
+      - '^fmt\.Errorf(# use errors\.Errorf instead)?$'
+      - '^platforms\.DefaultString(# use platforms\.Format(platforms\.DefaultSpec()) instead\.)?$'
+  gosec:
+    excludes:
+      - G204  # Audit use of command execution
+      - G402  # TLS MinVersion too low
+    config:
+      G306: "0644"
+
+issues:
+  exclude-files:
+    - ".*\\.pb\\.go$"
+  exclude-rules:
+    - linters:
+        - revive
+      text: "stutters"
+    - linters:
+        - revive
+      text: "empty-block"
+    - linters:
+        - revive
+      text: "superfluous-else"
+    - linters:
+        - revive
+      text: "unused-parameter"
+    - linters:
+        - revive
+      text: "redefines-builtin-id"
+    - linters:
+        - revive
+      text: "if-return"
+
+  # show all
+  max-issues-per-linter: 0
+  max-same-issues: 0
